@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'Index of ' + ${currentPath}">Index of pathname</title>
+</head>
+<body>
+<h1 th:text="'Index of ' + ${currentPath}">Index of pathname</h1>
+<table>
+    <tr>
+        <th valign="top">
+            <img alt="[ICO]" th:src="@{/icons/blank.gif}">
+        </th>
+        <th>
+            <a th:href="'/list?order=name&path=' + ${currentPath}">Name</a>
+        </th>
+        <th>
+            <a th:href="'/list?order=timestamp&path=' + ${currentPath}">Last modified</a>
+        </th>
+        <th>
+            <a th:href="'/list?order=size&path=' + ${currentPath}">Size</a>
+        </th>
+        <th>Owner</th>
+        <th>Group</th>
+        <th>Permission</th>
+        <th>
+            <a th:href="'/list?order=description&path=' + ${currentPath}">Description</a>
+        </th>
+    </tr>
+    <tr>
+        <th colspan="8">
+            <hr>
+        </th>
+    </tr>
+    <tr>
+        <td valign="top">
+            <img alt="[ROOTDIR]" th:src="@{/icons/up.gif}">
+        </td>
+        <td>
+            <a href="/list">Root Directory</a>
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td align="right">-</td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <img alt="[PARENTDIR]" th:src="@{/icons/back.gif}">
+        </td>
+        <td>
+            <a th:href="${hrefParent}">Parent Directory</a>
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td align="right">-</td>
+    </tr>
+    <tr th:each="file : ${files}">
+        <td valign="top">
+            <img alt="[ICN]" th:src="'/icons/' + ${file.icon}">
+        </td>
+        <td>
+            <a th:href="${file.href}" th:text="${file.name}">Filename</a>
+        </td>
+        <td align="right" th:text="${#temporals.format(file.timestamp, 'dd-MM-yyyy HH:mm')}">1981-03-22 13:18</td>
+        <td align="right" th:text="${file.sizeFormat}">0b</td>
+        <td th:text="${file.owner}">Owner</td>
+        <td th:text="${file.group}">Group</td>
+        <td th:text="${file.permission}">Permission</td>
+        <td th:text="${file.description}">Description</td>
+    </tr>
+</table>
+</body>
+</html>
