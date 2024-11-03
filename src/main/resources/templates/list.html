@@ -5,6 +5,23 @@
     <title th:text="'Index of ' + ${currentPath}">Index of pathname</title>
 </head>
 <body>
+<table border="1" cellpadding="10" cellspacing="0" style="border: 1px solid #000000;" th:if="${currentPath == '/'}"
+       width="100%">
+    <tr>
+        <td bgcolor="#f0f0f0" style="font-family: Arial, sans-serif; font-size: 12px;">
+            <b>Legal Disclaimer</b><br><br>
+            Tutto il materiale presente su questo server è fornito gratuitamente e a scopo informativo. I diritti sui
+            contenuti appartengono ai rispettivi autori e proprietari. Non ci assumiamo alcuna responsabilità per
+            eventuali errori, omissioni o danni derivanti dall'uso del materiale scaricato da questo sito. Si consiglia
+            agli utenti di verificare l'accuratezza delle informazioni e di fare un uso prudente dei contenuti.<br><br>
+            In caso di presunte violazioni del copyright, è possibile <a href="mailto:marco@markreds.it">contattarci via
+            email</a> per richiedere la rimozione del materiale che
+            potrebbe violare i diritti d'autore.<br><br>
+            Utilizzando questo sito, l'utente accetta queste condizioni e riconosce di utilizzare il materiale a proprio
+            rischio.
+        </td>
+    </tr>
+</table>
 <h1 th:text="'Index of ' + ${currentPath}">Index of pathname</h1>
 <table>
     <tr>
@@ -40,11 +57,11 @@
             <a href="/list">Root Directory</a>
         </td>
         <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
         <td align="right">-</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
     </tr>
     <tr>
         <td valign="top">
@@ -54,11 +71,11 @@
             <a th:href="${hrefParent}">Parent Directory</a>
         </td>
         <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
         <td align="right">-</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
     </tr>
     <tr th:each="file : ${files}">
         <td valign="top">

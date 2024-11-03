@@ -27,55 +27,7 @@ public class FileBrowserController {
 
     private final FtpService ftpService;
 
-    @RequestMapping({"/", "/list"})
-    public String list(@RequestParam(name = "path", required = false, defaultValue = "/") String remotePath,
-                       @RequestParam(name = "order", required = false, defaultValue = "name") String orderBy,
-                       Model model) throws IOException {
-        List<FileInfo> files = new LinkedList<>();
-        for (FTPFile file : ftpService.listFiles(remotePath)) {
-            if (!FILES_TO_SKIP.contains(file.getName()))
-                files.add(new FileInfo()
-                        .setName(file.getName())
-                        .setPath(remotePath)
-                        .setSize(file.getSize())
-                        .setSizeFormat(getSizeFormat(file))
-                        .setIcon(findIcon(file))
-                        .setHref(getHypertextReference(file, remotePath))
-                        .setOwner(file.getUser())
-                        .setGroup(file.getGroup())
-                        .setPermission(getPermission(file))
-                        .setTimestamp(LocalDateTime.ofInstant(file.getTimestampInstant(), ZoneId.systemDefault()))
-                );
-        }
-        switch (orderBy) {
-            case "timestamp" ->
-                    files.sort(Comparator.comparing(FileInfo::getTimestamp, Comparator.nullsFirst(LocalDateTime::compareTo)));
-            case "size" -> files.sort(Comparator.comparing(FileInfo::getSize, Comparator.nullsFirst(Long::compareTo)));
-            case "description" ->
-                    files.sort(Comparator.comparing(FileInfo::getDescription, Comparator.nullsFirst(String::compareTo)));
-            default -> files.sort(Comparator.comparing(FileInfo::getName, Comparator.nullsFirst(String::compareTo)));
-        }
-        model.addAttribute("currentPath", remotePath);
-        model.addAttribute("hrefParent", getParentHypertextReference(remotePath));
-        model.addAttribute("files", files);
-        return "list";
-    }
-
-    private String findIcon(FTPFile file) {
-        if (file.isDirectory()) {
-            return "folder.gif";
-        }
-
-        if (file.isSymbolicLink()) {
-            return "link.gif";
-        }
-
-        String iconName = ICONS.get(FilenameUtils.getExtension(file.getName()));
-
-        return iconName != null ? iconName : "generic.gif";
-    }
-
-    private String getHypertextReference(FTPFile file, String path) {
+    private static String hypertextReferenceOf(FTPFile file, String path) {
         if (file.isDirectory()) {
             if (file.getName().equals("/")) {
                 return "/list";
@@ -101,12 +53,12 @@ public class FileBrowserController {
         return "#";
     }
 
-    private String getParentHypertextReference(String path) {
+    private static String parentHypertextReferenceOf(String path) {
         Path parent = Path.of(path).getParent();
         return (parent != null) ? "/list?path=" + parent.toString() : "/list";
     }
 
-    private String getPermission(FTPFile file) {
+    private static String permissionOf(FTPFile file) {
         return String.valueOf(file.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION) ? 'r' : '-') +
                 (file.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ? 'w' : '-') +
                 (file.hasPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 'x' : '-') +
@@ -118,7 +70,7 @@ public class FileBrowserController {
                 (file.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 'x' : '-');
     }
 
-    private String getSizeFormat(FTPFile file) {
+    private static String sizeFormatOf(FTPFile file) {
         if (!file.isDirectory()) {
             long size = file.getSize();
             String[] units = {"b", "K", "M", "G", "T"};
@@ -132,5 +84,53 @@ public class FileBrowserController {
             return String.format("%.1f%s", (double) size, units[unitIndex]);
         }
         return "-";
+    }
+
+    @RequestMapping({"/", "/list"})
+    public String list(@RequestParam(name = "path", required = false, defaultValue = "/") String remotePath,
+                       @RequestParam(name = "order", required = false, defaultValue = "name") String orderBy,
+                       Model model) throws IOException {
+        List<FileInfo> files = new LinkedList<>();
+        for (FTPFile file : ftpService.listFiles(remotePath)) {
+            if (!FILES_TO_SKIP.contains(file.getName()))
+                files.add(new FileInfo()
+                        .setName(file.getName())
+                        .setPath(remotePath)
+                        .setSize(file.getSize())
+                        .setSizeFormat(sizeFormatOf(file))
+                        .setIcon(findIcon(file))
+                        .setHref(hypertextReferenceOf(file, remotePath))
+                        .setOwner(file.getUser())
+                        .setGroup(file.getGroup())
+                        .setPermission(permissionOf(file))
+                        .setTimestamp(LocalDateTime.ofInstant(file.getTimestampInstant(), ZoneId.systemDefault()))
+                );
+        }
+        switch (orderBy) {
+            case "timestamp" ->
+                    files.sort(Comparator.comparing(FileInfo::getTimestamp, Comparator.nullsFirst(LocalDateTime::compareTo)));
+            case "size" -> files.sort(Comparator.comparing(FileInfo::getSize, Comparator.nullsFirst(Long::compareTo)));
+            case "description" ->
+                    files.sort(Comparator.comparing(FileInfo::getDescription, Comparator.nullsFirst(String::compareTo)));
+            default -> files.sort(Comparator.comparing(FileInfo::getName, Comparator.nullsFirst(String::compareTo)));
+        }
+        model.addAttribute("currentPath", remotePath);
+        model.addAttribute("hrefParent", parentHypertextReferenceOf(remotePath));
+        model.addAttribute("files", files);
+        return "list";
+    }
+
+    private String findIcon(FTPFile file) {
+        if (file.isDirectory()) {
+            return "folder.gif";
+        }
+
+        if (file.isSymbolicLink()) {
+            return "link.gif";
+        }
+
+        String iconName = ICONS.get(FilenameUtils.getExtension(file.getName()));
+
+        return iconName != null ? iconName : "generic.gif";
     }
 }
