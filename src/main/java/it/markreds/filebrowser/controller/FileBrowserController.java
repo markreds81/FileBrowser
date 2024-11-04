@@ -30,6 +30,7 @@ public class FileBrowserController {
         ICONS.put("jpg", "image2.gif");
         ICONS.put("sit", "compressed.gif");
         ICONS.put("zip", "compressed.gif");
+        ICONS.put("7z", "compressed.gif");
         ICONS.put("smi", "screw2.gif");
         ICONS.put("dmg", "screw2.gif");
         ICONS.put("bin", "binhex.gif");
