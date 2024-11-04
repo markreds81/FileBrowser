@@ -20,10 +20,25 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FileBrowserController {
     private static final Set<String> FILES_TO_SKIP = Set.of(".", "..");
-    private static final Map<String, String> ICONS = Map.of(
-            "gif", "box2.gif",
-            "sit", "compressed.gif"
-    );
+    private static final Map<String, String> ICONS = new HashMap<>();
+
+    static {
+        ICONS.put("gif", "image2.gif");
+        ICONS.put("png", "image2.gif");
+        ICONS.put("jpg", "image2.gif");
+        ICONS.put("sit", "compressed.gif");
+        ICONS.put("zip", "compressed.gif");
+        ICONS.put("smi", "screw2.gif");
+        ICONS.put("dmg", "screw2.gif");
+        ICONS.put("bin", "binhex.gif");
+        ICONS.put("c", "c.gif");
+        ICONS.put("hqx", "binhex.gif");
+        ICONS.put("pdf", "pdf.gif");
+        ICONS.put("ps", "ps.gif");
+        ICONS.put("tar", "tar.gif");
+        ICONS.put("txt", "text.gif");
+        ICONS.put("rtf", "text.gif");
+    }
 
     private final FtpService ftpService;
 
@@ -86,6 +101,20 @@ public class FileBrowserController {
         return "-";
     }
 
+    private static String iconOf(FTPFile file) {
+        if (file.isDirectory()) {
+            return "folder.gif";
+        }
+
+        if (file.isSymbolicLink()) {
+            return "link.gif";
+        }
+
+        String iconName = ICONS.get(FilenameUtils.getExtension(file.getName()));
+
+        return iconName != null ? iconName : "generic.gif";
+    }
+
     @RequestMapping({"/", "/list"})
     public String list(@RequestParam(name = "path", required = false, defaultValue = "/") String remotePath,
                        @RequestParam(name = "order", required = false, defaultValue = "name") String orderBy,
@@ -98,7 +127,7 @@ public class FileBrowserController {
                         .setPath(remotePath)
                         .setSize(file.getSize())
                         .setSizeFormat(sizeFormatOf(file))
-                        .setIcon(findIcon(file))
+                        .setIcon(iconOf(file))
                         .setHref(hypertextReferenceOf(file, remotePath))
                         .setOwner(file.getUser())
                         .setGroup(file.getGroup())
@@ -118,19 +147,5 @@ public class FileBrowserController {
         model.addAttribute("hrefParent", parentHypertextReferenceOf(remotePath));
         model.addAttribute("files", files);
         return "list";
-    }
-
-    private String findIcon(FTPFile file) {
-        if (file.isDirectory()) {
-            return "folder.gif";
-        }
-
-        if (file.isSymbolicLink()) {
-            return "link.gif";
-        }
-
-        String iconName = ICONS.get(FilenameUtils.getExtension(file.getName()));
-
-        return iconName != null ? iconName : "generic.gif";
     }
 }
