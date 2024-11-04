@@ -8,7 +8,7 @@
 <table border="1" cellpadding="10" cellspacing="0" style="border: 1px solid #000000;" th:if="${currentPath == '/'}"
        width="100%">
     <tr>
-        <td bgcolor="#f0f0f0" style="font-family: Arial, sans-serif; font-size: 12px;">
+        <td bgcolor="#f0f0f0" colspan="8" style="font-family: Arial, sans-serif; font-size: 12px;">
             <b>Legal Disclaimer</b><br><br>
             Tutto il materiale presente su questo server è fornito gratuitamente e a scopo informativo. I diritti sui
             contenuti appartengono ai rispettivi autori e proprietari. Non ci assumiamo alcuna responsabilità per
@@ -88,8 +88,21 @@
         <td align="right" th:text="${file.sizeFormat}">0b</td>
         <td th:text="${file.owner}">Owner</td>
         <td th:text="${file.group}">Group</td>
-        <td th:text="${file.permission}">Permission</td>
+        <td style="font-family: Courier, 'Courier New', monospace;" th:text="${file.permission}">
+            Permission
+        </td>
         <td th:text="${file.description}">Description</td>
+    </tr>
+    <tr>
+        <th colspan="8">
+            <hr>
+        </th>
+    </tr>
+    <tr>
+        <td colspan="8" style="font-family: Arial, sans-serif; font-size: 10px;"
+            th:text="'Found ' + ${files.size} + ' files in ' + ${elapsedSeconds} + '.' + ${elapsedMilliseconds} + ' seconds.'">
+            Statistics
+        </td>
     </tr>
 </table>
 </body>

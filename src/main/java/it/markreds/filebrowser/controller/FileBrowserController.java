@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -119,6 +121,7 @@ public class FileBrowserController {
     public String list(@RequestParam(name = "path", required = false, defaultValue = "/") String remotePath,
                        @RequestParam(name = "order", required = false, defaultValue = "name") String orderBy,
                        Model model) throws IOException {
+        Instant start = Instant.now();
         List<FileInfo> files = new LinkedList<>();
         for (FTPFile file : ftpService.listFiles(remotePath)) {
             if (!FILES_TO_SKIP.contains(file.getName()))
@@ -135,6 +138,7 @@ public class FileBrowserController {
                         .setTimestamp(LocalDateTime.ofInstant(file.getTimestampInstant(), ZoneId.systemDefault()))
                 );
         }
+
         switch (orderBy) {
             case "timestamp" ->
                     files.sort(Comparator.comparing(FileInfo::getTimestamp, Comparator.nullsFirst(LocalDateTime::compareTo)));
@@ -143,9 +147,19 @@ public class FileBrowserController {
                     files.sort(Comparator.comparing(FileInfo::getDescription, Comparator.nullsFirst(String::compareTo)));
             default -> files.sort(Comparator.comparing(FileInfo::getName, Comparator.nullsFirst(String::compareTo)));
         }
+
         model.addAttribute("currentPath", remotePath);
         model.addAttribute("hrefParent", parentHypertextReferenceOf(remotePath));
         model.addAttribute("files", files);
+
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+        long elapsedSeconds = duration.getSeconds();
+        long elapsedMilliseconds = duration.toMillis() % 1000;
+
+        model.addAttribute("elapsedSeconds", elapsedSeconds);
+        model.addAttribute("elapsedMilliseconds", elapsedMilliseconds);
+
         return "list";
     }
 }
