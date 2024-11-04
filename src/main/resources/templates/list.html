@@ -100,7 +100,7 @@
     </tr>
     <tr>
         <td colspan="8" style="font-family: Arial, sans-serif; font-size: 10px;"
-            th:text="'Found ' + ${files.size} + ' files in ' + ${elapsedSeconds} + '.' + ${elapsedMilliseconds} + ' seconds.'">
+            th:text="'Found ' + ${files.size} + ' files in ' + ${elapsedSeconds} + '.' + ${elapsedMilliseconds} + ' seconds. ' + ${@environment.getProperty('spring.application.name')} + ' ver.' + ${@environment.getProperty('app.version')}">
             Statistics
         </td>
     </tr>
