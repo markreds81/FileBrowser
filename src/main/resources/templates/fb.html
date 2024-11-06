@@ -2,7 +2,7 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="'Index of ' + ${currentPath}">Index of pathname</title>
+    <title th:text="'File Browser ' + ${currentPath}">File Browser</title>
 </head>
 <body>
 <table border="1" cellpadding="10" cellspacing="0" style="border: 1px solid #000000;" th:if="${currentPath == '/'}"
@@ -29,19 +29,19 @@
             <img alt="[ICO]" th:src="@{/icons/blank.gif}">
         </th>
         <th>
-            <a th:href="'/list?order=name&path=' + ${currentPath}">Name</a>
+            <a th:href="'/fb?order=name&path=' + ${currentPath}">Name</a>
         </th>
         <th>
-            <a th:href="'/list?order=timestamp&path=' + ${currentPath}">Last modified</a>
+            <a th:href="'/fb?order=timestamp&path=' + ${currentPath}">Last modified</a>
         </th>
         <th>
-            <a th:href="'/list?order=size&path=' + ${currentPath}">Size</a>
+            <a th:href="'/fb?order=size&path=' + ${currentPath}">Size</a>
         </th>
         <th>Owner</th>
         <th>Group</th>
         <th>Permission</th>
         <th>
-            <a th:href="'/list?order=description&path=' + ${currentPath}">Description</a>
+            <a th:href="'/fb?order=description&path=' + ${currentPath}">Description</a>
         </th>
     </tr>
     <tr>
@@ -54,7 +54,7 @@
             <img alt="[ROOTDIR]" th:src="@{/icons/up.gif}">
         </td>
         <td>
-            <a href="/list">Root Directory</a>
+            <a href="/fb">Root Directory</a>
         </td>
         <td>&nbsp;</td>
         <td align="right">-</td>

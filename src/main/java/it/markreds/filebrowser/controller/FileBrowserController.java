@@ -48,24 +48,24 @@ public class FileBrowserController {
     private static String hypertextReferenceOf(FTPFile file, String path) {
         if (file.isDirectory()) {
             if (file.getName().equals("/")) {
-                return "/list";
+                return "/fb";
             }
             if (!path.endsWith("/")) {
                 path = path + "/";
             }
-            return "/list?path=" + path + file.getName();
+            return "/fb?path=" + path + file.getName();
         }
 
         if (file.isSymbolicLink()) {
             // TODO da verificare
-            return "/list?path=" + file.getLink();
+            return "/fb?path=" + file.getLink();
         }
 
         if (file.isFile()) {
             if (!path.endsWith("/")) {
                 path = path + "/";
             }
-            return "/ftp/download?file=" + path + file.getName();
+            return "/ftp/get?path=" + path + file.getName();
         }
 
         return "#";
@@ -73,7 +73,7 @@ public class FileBrowserController {
 
     private static String parentHypertextReferenceOf(String path) {
         Path parent = Path.of(path).getParent();
-        return (parent != null) ? "/list?path=" + parent.toString() : "/list";
+        return (parent != null) ? "/fb?path=" + parent.toString() : "/fb";
     }
 
     private static String permissionOf(FTPFile file) {
@@ -118,10 +118,10 @@ public class FileBrowserController {
         return iconName != null ? iconName : "generic.gif";
     }
 
-    @RequestMapping({"/", "/list"})
-    public String list(@RequestParam(name = "path", required = false, defaultValue = "/") String remotePath,
-                       @RequestParam(name = "order", required = false, defaultValue = "name") String orderBy,
-                       Model model) throws IOException {
+    @RequestMapping({"/", "/fb"})
+    public String listFiles(@RequestParam(name = "path", required = false, defaultValue = "/") String remotePath,
+                            @RequestParam(name = "order", required = false, defaultValue = "name") String orderBy,
+                            Model model) throws IOException {
         Instant start = Instant.now();
         List<FileInfo> files = new LinkedList<>();
         for (FTPFile file : ftpService.listFiles(remotePath)) {
@@ -161,6 +161,6 @@ public class FileBrowserController {
         model.addAttribute("elapsedSeconds", elapsedSeconds);
         model.addAttribute("elapsedMilliseconds", elapsedMilliseconds);
 
-        return "list";
+        return "fb";
     }
 }

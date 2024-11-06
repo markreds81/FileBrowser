@@ -37,7 +37,7 @@ dependencies {
 
 processResources {
     filesMatching("application.properties") {
-        expand(project: project)
+        expand(project.properties)
     }
 }
 
